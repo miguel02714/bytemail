@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Registro - Byte Mail</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    color: #e0e0e0;
+  }
+
+  form {
+    background: #1f1f1f;
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.7);
+    width: 100%;
+    max-width: 360px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  h1 {
+    text-align: center;
+    color: #ff3b3b;
+    margin-bottom: 30px;
+  }
+
+  label {
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #e0e0e0;
+  }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #444;
+    border-radius: 8px;
+    outline: none;
+    background: #121212;
+    color: #e0e0e0;
+    transition: 0.3s;
+  }
+
+  input:focus {
+    border-color: #ff3b3b;
+    box-shadow: 0 0 5px rgba(255, 59, 59, 0.5);
+  }
+
+  input:invalid {
+    border-color: #ff4d4f;
+  }
+
+  button {
+    padding: 12px;
+    background: #ff3b3b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  button:hover {
+    background: #d32f2f;
+  }
+
+  .flash {
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    text-align: center;
+    font-weight: bold;
+  }
+
+  .flash.success {
+    background-color: #2e7d32;
+    color: #fff;
+  }
+
+  .flash.error {
+    background-color: #c62828;
+    color: #fff;
+  }
+
+  .links {
+    margin-top: 15px;
+    text-align: center;
+  }
+
+  .links a {
+    text-decoration: none;
+    color: #ff3b3b;
+    font-size: 14px;
+  }
+
+  .links a:hover {
+    text-decoration: underline;
+  }
+</style>
+</head>
+<body>
+<form action="/registro" method="post">
+  <h1>Byte Mail</h1>
+
+  <!-- Flash messages -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  <label for="nome">Nome</label>
+  <input type="text" id="nome" name="nome" placeholder="Digite seu nome..." required>
+
+  <label for="email">E-mail</label>
+  <input type="email" id="email" name="email" placeholder="usuario@bytemail.com"
+         pattern="^[a-zA-Z0-9._%+-]+@bytemail\.com$"
+         title="O email deve terminar com @bytemail.com" required>
+
+  <label for="senha">Senha</label>
+  <input type="password" id="senha" name="senha" placeholder="Digite sua senha..." required>
+
+  <label for="confirmar">Confirmar Senha</label>
+  <input type="password" id="confirmar" name="confirmar" placeholder="Confirme sua senha..." required>
+
+  <button type="submit">Registrar</button>
+
+  <div class="links">
+    <span>Já tem conta? <a href="/login">Entrar</a></span>
+  </div>
+</form>
+</body>
+</html>
