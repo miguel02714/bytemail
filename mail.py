@@ -11,11 +11,6 @@ app.secret_key = "chave-super-secreta"
 DB = "bytemail.db"
 UPLOAD_FOLDER = "static/uploads"
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "gif"}
-@app.after_request
-def remove_xframe_options(response):
-    response.headers['X-Frame-Options'] = 'ALLOWALL'
-    response.headers['Content-Security-Policy'] = "frame-ancestors *"
-    return response
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
@@ -103,9 +98,6 @@ def registro():
         senha = request.form["senha"]
         hashed_senha = generate_password_hash(senha)
 
-        if not email.endswith("@bytemail.com"):
-            return render_template("registro.html", erro="O e-mail deve terminar com @bytemail.com")
-
         try:
             conn = get_db()
             c = conn.cursor()
@@ -116,7 +108,6 @@ def registro():
             return redirect(url_for("login"))
         except sqlite3.IntegrityError:
             return render_template("registro.html", erro="E-mail já registrado")
-
     return render_template("registro.html")
 
 # -------------------------
@@ -144,7 +135,7 @@ def inicio():
     return render_template("index.html", user=user)
 
 # -------------------------
-# Página de perfil
+# Perfil
 # -------------------------
 @app.route("/perfil", methods=["GET"])
 def perfil():
@@ -159,9 +150,6 @@ def perfil():
     conn.close()
     return render_template("perfil.html", user=user)
 
-# -------------------------
-# Editar perfil (nome, status e foto)
-# -------------------------
 @app.route("/perfil/editar", methods=["POST"])
 def editar_perfil():
     if "user" not in session:
@@ -195,7 +183,7 @@ def editar_perfil():
     return redirect(url_for("perfil"))
 
 # -------------------------
-# API de emails
+# API Emails
 # -------------------------
 @app.route("/api/emails")
 def api_emails():
@@ -239,9 +227,6 @@ def enviar():
     mensagem = request.form.get("mensagem", "")
     hora = datetime.now().strftime("%H:%M")
 
-    if not destinatario.endswith("@bytemail.com"):
-        return jsonify({"status": "error", "message": "Só é possível enviar para @bytemail.com"}), 400
-
     conn = get_db()
     c = conn.cursor()
     c.execute("INSERT INTO emails (remetente, destinatario, assunto, mensagem, hora) VALUES (?, ?, ?, ?, ?)",
@@ -255,4 +240,5 @@ def enviar():
 # -------------------------
 if __name__ == "__main__":
     init_db()
-    app.run(debug=True)
+    # Rodar no localhost sem HTTPS, funciona em iframe
+    app.run(host="0.0.0.0", port=5000, debug=True)
